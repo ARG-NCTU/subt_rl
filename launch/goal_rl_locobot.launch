@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="veh" default="locobot" />
+    <arg name="cmd" default="locobot/cmd_vel" />
+
+    <group ns="$(arg veh)">
+
+        <!-- change to destination -->
+        <node pkg="baseline_navi" type="apriltags_to_goalpoint.py" name="apriltags_to_goalpoint_node" output="screen">
+        </node>
+
+        <node pkg="subt_rl" type="goal_nav_tf_locobot.py" name="goal_nav_rl" output="screen">
+            <remap from="goal_in" to="goal" />
+            <remap from="laser_in" to="RL/scan" /> 
+            <remap from="cmd_out" to="$(arg cmd)" />
+        </node>
+
+    </group>
+
+</launch>
