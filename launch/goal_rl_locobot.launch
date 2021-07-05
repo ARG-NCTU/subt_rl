@@ -5,11 +5,11 @@
     <arg name="veh" default="locobot" />
     <arg name="cmd" default="locobot/cmd_vel" />
 
-    <group ns="$(arg veh)">
+    <include file="$(find subt_rl)/launch/pcToLaser_locobot.launch">
+        <arg name="veh" value="$(arg veh)" />
+    </include>
 
-        <!-- change to destination -->
-        <node pkg="baseline_navi" type="apriltags_to_goalpoint.py" name="apriltags_to_goalpoint_node" output="screen">
-        </node>
+    <group ns="$(arg veh)">
 
         <node pkg="subt_rl" type="goal_nav_tf_locobot.py" name="goal_nav_rl" output="screen">
             <remap from="goal_in" to="goal" />
