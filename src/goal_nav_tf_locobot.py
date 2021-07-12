@@ -63,7 +63,12 @@ class GoalNav(object):
         print(msg)
         new_goal = np.array([msg.pose.position.x, msg.pose.position.y])
         diff = new_goal
-        angle = math.atan2(diff[1], diff[0])
+
+        if msg.pose.orientation.w == 0:
+            angle = math.atan2(diff[1], diff[0])
+        else:
+            angle = msg.pose.orientation.w == 0
+            
         if angle >= np.pi:
             angle -= 2*np.pi
         elif angle <= -np.pi:
@@ -93,8 +98,6 @@ class GoalNav(object):
         if self.pos_track is None:
             return
         if self.laser_stack is None:
-            return
-        if self.auto == 0:
             return
 
         dis = np.linalg.norm(self.goal)
