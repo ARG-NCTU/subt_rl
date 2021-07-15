@@ -18,26 +18,32 @@ class xyz():
 		self.get_model = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
 		self.sub_joy = rospy.Subscriber("joy", Joy, self.cb_joy, queue_size=1)
 		self.list = []
+		self.flag = False
 
 
 
 	def cb_joy(self, msg):
 		if (msg.axes[-1] == -1) :
-			agent = ModelState()
-			rospy.wait_for_service('/gazebo/get_model_state')
-			try:
-				agent = self.get_model('X1', '')
-			except (rospy.ServiceException) as e:
-				print(e)
-				return
+			if not self.flag :
+				self.flag = True
+				agent = ModelState()
+				rospy.wait_for_service('/gazebo/get_model_state')
+				try:
+					agent = self.get_model('X1', '')
+				except (rospy.ServiceException) as e:
+					print(e)
+					return
 
-			print(agent.pose.position.x, agent.pose.position.y, agent.pose.position.z)
-			self.list.append([agent.pose.position.x, agent.pose.position.y, agent.pose.position.z])
-			with open('GazeboXYZ.csv', 'w', newline='') as csvFile:
-				writer = csv.writer(csvFile)
-				for i in range(len(self.list)):
-					writer.writerow(self.list[i])
-			time.sleep(1)
+				print(agent.pose.position.x, agent.pose.position.y, agent.pose.position.z)
+				self.list.append([agent.pose.position.x, agent.pose.position.y, agent.pose.position.z])
+				with open('GazeboXYZ.csv', 'w', newline='') as csvFile:
+					writer = csv.writer(csvFile)
+					for i in range(len(self.list)):
+						writer.writerow(self.list[i])
+				time.sleep(1)
+
+		else : self.flag = False
+		
 
 if __name__ == "__main__":
 	getxyz = xyz()
