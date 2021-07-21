@@ -99,8 +99,8 @@ class RunRDPGGoal(object):
         super().__init__()
         self.max_dis = 10  # meters
         self.frame = rospy.get_param("~frame", "map")
-        self.model = rospy.get_param("~model", "s0312_f2999729.pth")
-        self.action_scale = {'linear': 1.5, 'angular': 0.8}
+        self.model = rospy.get_param("~model", "s0148_f895359.pth")
+        self.action_scale = {'linear': 0.4, 'angular': 0.55}
 
         self.auto = 0
         self.goal = None
@@ -157,6 +157,27 @@ class RunRDPGGoal(object):
             self.auto = 0
             rospy.loginfo('go manual')
 
+        if msg.axes[7] == -1 and self.auto:
+            rospy.loginfo('linear slow')
+            self.action_scale['linear'] -= 0.01
+            rospy.loginfo(self.action_scale['linear'] )
+
+        if msg.axes[7] == 1 and self.auto:
+            rospy.loginfo('linear fast')
+            self.action_scale['linear'] += 0.01
+            rospy.loginfo(self.action_scale['linear'] )
+
+        if msg.axes[6] == -1 and self.auto:
+            rospy.loginfo('angular slow')
+            self.action_scale['angular'] -= 0.01
+            rospy.loginfo(self.action_scale['angular'] )
+
+        if msg.axes[6] == 1 and self.auto:
+            rospy.loginfo('angular fast')
+            self.action_scale['angular'] += 0.01
+            rospy.loginfo(self.action_scale['angular'] )
+
+
     def cb_goal(self, msg):
         if msg.header.frame_id != self.frame:
             self.goal = None
@@ -198,16 +219,16 @@ class RunRDPGGoal(object):
 
     def inference(self, event):
         if self.goal is None:
-            rospy.loginfo("goal is None")
+            # rospy.loginfo("goal is None")
             return
         if self.pose is None:
-            rospy.loginfo("pose is None")
+            # rospy.loginfo("pose is None")
             return
         if self.laser is None:
-            rospy.loginfo("laser is None")
+            # rospy.loginfo("laser is None")
             return
         if self.auto == 0:
-            rospy.loginfo("is not auto")
+            # rospy.loginfo("is not auto")
             return
 
         dis = np.linalg.norm(self.goal-self.last_pos)
@@ -217,7 +238,7 @@ class RunRDPGGoal(object):
             return
 
 
-        rospy.loginfo("moving to goal")
+        # rospy.loginfo("moving to goal")
         # reshape
         laser = self.laser.reshape(-1)
         track = self.pose.reshape(-1)

@@ -4,7 +4,7 @@
     <arg name="model" default="s0312_f2999729.pth" />
     <arg name="map_frame" default="map" />
     <arg name="laser_in" default="RL/scan" />
-    <arg name="odom_in" default="odom_pose" />
+    <arg name="odom_in" default="truth_map_posestamped" />
     <arg name="cmd_out" default="/X1/x1_velocity_controller/cmd_vel" />
     <arg name="joy" default="joy" />
     <arg name="goal_in" default="move_base_simple/goal" />
