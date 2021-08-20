@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <node pkg="subt_rl" type="goal_nav_tf_blimp.py" name="goal_nav_tf" output="screen">
+
+      <remap from="goal_in" to="/move_base_simple/goal" />
+      <remap from="laser_in" to="/RL/scan" />
+      <remap from="odom_in" to="/truth_map_posestamped" />
+      <remap from="joy" to="/joy" />
+      <remap from="cmd_out" to="/blimp/teleokeyboardcmd" />
+  </node>
+</launch>
