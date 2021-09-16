@@ -118,7 +118,7 @@ class GoalNav(object):
 		self.pos_n = 10
 		self.frame = rospy.get_param("~frame", "map")
 		self.action_scale = {'linear': rospy.get_param(
-			'~linear_scale', 0.5), 'angular': rospy.get_param("~angular_scale", 0.36)}
+			'~linear_scale', 1.5), 'angular': rospy.get_param("~angular_scale", 0.8)}
 
 		self.auto = 0
 		self.goal = None
@@ -253,7 +253,7 @@ class GoalNav(object):
 		dis = np.linalg.norm(self.goal-self.last_pos)
 		if dis < 1.5:
 			rospy.loginfo("goal reached")
-			self.goal = None
+			# self.goal = None
 			return
 
 
