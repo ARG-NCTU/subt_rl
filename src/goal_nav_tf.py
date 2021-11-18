@@ -121,16 +121,12 @@ class GoalNav(object):
 
     def inference(self, event):
         if self.goal is None:
-            print("self.goal is None")
             return
         if self.pos_track is None:
-            print("self.pos_track is None")
             return
         if self.laser_stack is None:
-            print("self.laser_stack is None")
             return
         if self.auto == 0:
-            print("not auto")
             return
 
         dis = np.linalg.norm(self.goal-self.last_pos)
