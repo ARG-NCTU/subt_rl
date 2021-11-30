@@ -103,7 +103,6 @@ RUN pip3 install \
     pyyaml \
     rospkg \
     catkin-tools\
-    matplotlib \
     cython \
     image \
     pandas \
@@ -111,14 +110,15 @@ RUN pip3 install \
     gdown
 
 # Pytorch for CPU
-RUN pip3 install \
-    torch==1.5.0+cpu \
-    torchvision==0.6.0+cpu \
-    -f https://download.pytorch.org/whl/torch_stable.html
+RUN wget https://github.com/KumaTea/pytorch-aarch64/releases/download/v1.9.0/torch-1.9.0-cp36-cp36m-linux_aarch64.whl -O \
+    torch-1.9.0-cp36-cp36m-linux_aarch64.whl \
+    && pip3 install torch-1.9.0-cp36-cp36m-linux_aarch64.whl torchvision \
+    && rm -rf  torch-1.9.0-cp36-cp36m-linux_aarch64.whl
 
 ##################################### setting ###################################################
 RUN chown -R ${USER}:${USER} ${HOME}/
 RUN echo "${USER} ALL=(ALL)  ALL" >> /etc/sudoers
+RUN echo "export OPENBLAS_CORETYPE=ARMV8" >> /etc/profile
 
 # Support of nvidia-docker 2.0
 ENV NVIDIA_VISIBLE_DEVICES=all
