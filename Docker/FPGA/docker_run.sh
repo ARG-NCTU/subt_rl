@@ -47,7 +47,7 @@ docker run \
     -v "/dev:/dev" \
     -v "/etc/localtime:/etc/localtime:ro" \
     -v "/tmp/.X11-unix:/tmp/.X11-unix" \
-    -v "/home/$USER/catkin_ws/subt_rl:/home/argsubt/catkin_ws/subt_rl" \
+    -v "/home/$USER/catkin_ws/src/subt_rl:/home/argsubt/catkin_ws/src/subt_rl" \
     --user "root:root" \
     --name argsubt \
     --network host \
