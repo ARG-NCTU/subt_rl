@@ -47,7 +47,7 @@ class GoalNav(object):
         # subscriber, timer
         self.sub_joy = rospy.Subscriber("joy", Joy, self.cb_joy, queue_size=1)
         self.sub_goal = rospy.Subscriber(
-            "goal_in", PoseStamped, self.cb_goal, queue_size=1)
+            "/move_base_simple/goal", PoseStamped, self.cb_goal, queue_size=1)
         self.sub_odom = rospy.Subscriber(
             "odom_in", PoseStamped, self.cb_odom, queue_size=1)
         self.sub_laser = rospy.Subscriber(
@@ -72,6 +72,7 @@ class GoalNav(object):
             rospy.loginfo('go manual')
 
     def cb_goal(self, msg):
+        # print(msg)
         if msg.header.frame_id != self.frame:
             self.goal = None
             return
@@ -121,10 +122,13 @@ class GoalNav(object):
 
     def inference(self, event):
         if self.goal is None:
+            # print(self.goal)
             return
         if self.pos_track is None:
+            # print(self.pos_track)
             return
         if self.laser_stack is None:
+            # print(self.laser_stack)
             return
         if self.auto == 0:
             return

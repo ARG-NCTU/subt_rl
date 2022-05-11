@@ -4,10 +4,12 @@
 
     <arg name="veh" default="husky1" />
     <arg name="cmd" default="husky_velocity_controller/cmd_vel" />
-    <arg name="joy" default="joy" />
+    <arg name="joy" default="joy_teleop/joy" />
+    <arg name="cloud_in" default="points" />
 
     <include file="$(find subt_rl)/launch/pcToLaser_240.launch">
         <arg name="veh" value="$(arg veh)" />
+        <arg name="cloud_in" default="$(arg cloud_in)" />
     </include>
 
     <group ns="$(arg veh)">
@@ -16,9 +18,9 @@
 
             <remap from="goal_in" to="/move_base_simple/goal" />
             <remap from="laser_in" to="RL/scan" />
-            <remap from="odom_in" to="/slam_pose" />
-            <remap from="joy" to="$(arg joy)" />
-            <remap from="cmd_out" to="$(arg cmd)" />
+            <remap from="odom_in" to="posestamped" />
+            <remap from="joy" to="joy_teleop/joy" />
+            <remap from="cmd_out" to="joy_teleop/cmd_vel" />
         </node>
 
     </group>
