@@ -3,7 +3,8 @@
 <launch>
 
     <arg name="veh" default="husky1" />
-    <arg name="cmd" default="husky_velocity_controller/cmd_vel" />
+    <!-- <arg name="cmd" default="husky_velocity_controller/cmd_vel" /> -->
+    <arg name="cmd" default="joy_teleop/cmd_vel" />
     <arg name="joy" default="joy_teleop/joy" />
     <arg name="cloud_in" default="points" />
 
@@ -19,8 +20,8 @@
             <remap from="goal_in" to="/move_base_simple/goal" />
             <remap from="laser_in" to="RL/scan" />
             <remap from="odom_in" to="posestamped" />
-            <remap from="joy" to="joy_teleop/joy" />
-            <remap from="cmd_out" to="joy_teleop/cmd_vel" />
+            <remap from="joy" to="$(arg joy)" />
+            <remap from="cmd_out" to="$(arg cmd)" />
         </node>
 
     </group>
