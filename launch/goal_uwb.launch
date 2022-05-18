@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<launch>
+	<node pkg="pozyx_simulation" type="uwb_simulation_ranging_EE6F_two_points.py" name="uwb_two_points">
+		<param name="modelstate_index" value="2"/>
+	</node>
+	<node pkg="subt_rl" type="pub_gazebo_tf.py" name="pub_gazebo_tf" output="screen" />
+	<!-- <node pkg="subt_rl" type="goal_uwb.py" name="goal_uwb" output="screen" /> -->
+</launch>
