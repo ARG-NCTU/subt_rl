@@ -145,6 +145,7 @@ class GoalNav(object):
         laser = self.laser_stack.reshape(-1)
         track = self.pos_track.reshape(-1)
         state = np.append(laser, track)
+        print(laser.shape, track.shape, state.shape)
 
         state = tf.convert_to_tensor([state], dtype=tf.float32)
 
