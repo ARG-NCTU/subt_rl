@@ -7,7 +7,7 @@ import math
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped, Twist
 from sensor_msgs.msg import LaserScan, Joy
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool,Int16
 from scipy.spatial.transform import Rotation as R
 from pozyx_simulation.msg import uwb_data
 import time
@@ -41,7 +41,8 @@ class GoalNav(object):
 		self.policy_network = tf.saved_model.load(model_path)
 
 		# pub cmd
-		self.pub_cmd = rospy.Publisher("/X1/x1_velocity_controller/cmd_vel", Twist, queue_size=1)
+		self.pub_cmd = rospy.Publisher("/X2/x2_velocity_controller/cmd_vel", Twist, queue_size=1)
+		self.pub_start = rospy.Publisher("uwb_start_index", Int16, queue_size=1)
 
 		# subscriber, timer
 		self.sub_joy = rospy.Subscriber("/joy", Joy, self.cb_joy, queue_size=1)
@@ -110,7 +111,7 @@ class GoalNav(object):
 
 
 	def cb_uwb(self, msg):
-		if msg.distance[self.goal]*0.001 < 1.5: self.reach_goal = True
+		if msg.distance[self.goal]*0.001 < 1: self.reach_goal = True
 		track_pos = np.array([msg.distance[self.start]*0.001, msg.distance[self.goal]*0.001])
 		if self.pos_track is None:
 			self.pos_track = np.tile(track_pos, (self.pos_n, 1))
@@ -129,27 +130,32 @@ class GoalNav(object):
 			self.laser_stack[-1] = ranges
 
 	def switch_goal(self):
+		if (self.goal==3):return # Done
+
 		self.start = self.goal
 		self.goal += 1
-		if((self.goal == 4) or (self.goal == 8)):
-			msg = PoseStamped()
-			msg = rospy.wait_for_message('/truth_map_posestamped', PoseStamped, timeout=5)
-
-			r,p, yaw_begin = self.euler_from_quaternion(msg.pose.orientation.x,\
-												msg.pose.orientation.y,\
-												msg.pose.orientation.z,\
-												msg.pose.orientation.w)
-			yaw = yaw_begin
-			if(self.goal == 4):
-				self.goal = 5
-				# self.rotate(-1.04)
-			if(self.goal == 8):
-				self.goal = 9
-				# self.rotate(1.04)
+		# if((self.goal == 4) or (self.goal == 8)):
+		# 	msg = PoseStamped()
+		# 	msg = rospy.wait_for_message('/truth_map_posestamped', PoseStamped, timeout=5)
+		#
+		# 	r,p, yaw_begin = self.euler_from_quaternion(msg.pose.orientation.x,\
+		# 										msg.pose.orientation.y,\
+		# 										msg.pose.orientation.z,\
+		# 										msg.pose.orientation.w)
+		# 	yaw = yaw_begin
+		# 	if(self.goal == 4):
+		# 		self.goal = 5
+		# 		# self.rotate(-1.04)
+		# 	if(self.goal == 8):
+		# 		self.goal = 9
+		# 		# self.rotate(1.04)
 
 
 
 	def inference(self, event):
+		int16 = Int16()
+		int16.data = self.start
+		self.pub_start.publish(int16)
 		if self.pos_track is None:
 			rospy.loginfo("uwb is None")
 			return
@@ -187,7 +193,7 @@ class GoalNav(object):
 			self.action_scale['angular']
 
 		self.pub_cmd.publish(cmd)
-		rospy.loginfo("Moving to anchor "+str(self.goal)+" x="+str(cmd.linear.x)+" z="+str(cmd.angular.z))
+		rospy.loginfo( "Moving to anchor " + str(self.goal) )
 
 
 if __name__ == "__main__":

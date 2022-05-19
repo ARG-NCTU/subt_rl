@@ -13,7 +13,7 @@ from gazebo_msgs.srv import SetModelState, GetModelState, GetPhysicsProperties, 
 class GazeboTF(object):
     def __init__(self):
         self.broadcaster = tf.TransformBroadcaster()
-        self.fram_name = rospy.get_param("~frame_name", "X1/base_link")
+        self.fram_name = rospy.get_param("~frame_name", "X2/base_link")
         self.paraent_name = rospy.get_param("~parent_name", "map")
         self.pub_pose = rospy.Publisher("truth_map_posestamped", PoseStamped, queue_size=1)
         # self.pub_odometry = rospy.Publisher('truth_map_odometry', Odometry, queue_size=1)
@@ -23,7 +23,7 @@ class GazeboTF(object):
         agent = ModelState()
         rospy.wait_for_service('/gazebo/get_model_state')
         try:
-            agent = self.get_model('X1', '')
+            agent = self.get_model('X2', '')
         except (rospy.ServiceException) as e:
             print(e)
         new_pos = np.array(
