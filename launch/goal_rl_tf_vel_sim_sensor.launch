@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="veh" default="/" />
+    <arg name="cmd" default="X1/cmd_vel" />
+    <arg name="joy" default="/joy" />
+    <arg name="goal_dis" default="1.5" />
+    <arg name="mission" default="curriculum_90" />
+    <arg name="frame" default="map" />
+    <arg name="linear_scale" default="0.3" />
+    <arg name="angular_scale" default="0.3" />
+
+    <!-- Joystick Driver -->
+    <!-- <node pkg="joy" type="joy_node" name="joy">
+        <param name="dev" value="/dev/input/js1"/>
+        <param name="autorepeat_rate" type="double" value="10.0" /> 
+    </node> -->
+
+    <!-- <include file="$(find wamv_rl)/launch/pcToLaser_240_sim_locobot.launch">
+        <arg name="veh" value="$(arg veh)" />
+    </include> -->
+
+    <!-- map truth_map_posestamped -->
+    <group ns="$(arg veh)">
+
+        <node pkg="subt_rl" type="goal_nav_tf_vel_sensor.py" name="goal_nav_sensor_vel_rl" output="screen">
+            <param name="frame" value="$(arg frame)" />
+            <param name="goal_dis" value="$(arg goal_dis)" />
+            <param name="mission" value="$(arg mission)" />
+            <param name="linear_scale" value="$(arg linear_scale)" />
+            <param name="angular_scale" value="$(arg angular_scale)" />
+            <remap from="goal_in" to="/move_base_simple/goal" />
+            <remap from="laser_in" to="/RL/scan" />
+            <remap from="odom_in" to="/truth_map_posestamped" />
+            <remap from="joy" to="$(arg joy)" />
+            <remap from="cmd_out" to="$(arg cmd)" />
+        </node>
+
+    </group>
+
+
+</launch>

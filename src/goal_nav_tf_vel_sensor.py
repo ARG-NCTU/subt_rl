@@ -148,30 +148,30 @@ class GoalNav(object):
 
     def cb_laser(self, msg):
         ranges = np.array(msg.ranges)
-        # if(self.count<=100):
-        #     # print("90 degree")
-        #     visual_laser = LaserScan()
-        #     visual_laser = msg
-        #     visual_laser.ranges = ranges
-        #     for i in range(len(visual_laser.ranges)):
-        #         if(i<=74 or i>=165):
-        #             visual_laser.ranges[i] = 100
-        #     self.pub_visual_laser.publish(visual_laser)
+        if(self.count<=100):
+            # print("90 degree")
+            visual_laser = LaserScan()
+            visual_laser = msg
+            visual_laser.ranges = ranges
+            for i in range(len(visual_laser.ranges)):
+                if(i<=74 or i>=165):
+                    visual_laser.ranges[i] = 100
+            self.pub_visual_laser.publish(visual_laser)
 
-        #     for i in range(len(ranges)):
-        #         if(i<=74 or i>=165):
-        #             ranges[i] = self.max_dis
+            for i in range(len(ranges)):
+                if(i<=74 or i>=165):
+                    ranges[i] = self.max_dis
         
-        # elif(self.count>100 and self.count<=200):
-        #     # print("240 degree")
-        #     visual_laser = LaserScan()
-        #     visual_laser = msg
-        #     visual_laser.ranges = ranges
-        #     self.pub_visual_laser.publish(visual_laser)
+        elif(self.count>100 and self.count<=200):
+            # print("240 degree")
+            visual_laser = LaserScan()
+            visual_laser = msg
+            visual_laser.ranges = ranges
+            self.pub_visual_laser.publish(visual_laser)
 
-        # else:
-        #     # print("reset count")
-        #     self.count = 0
+        else:
+            # print("reset count")
+            self.count = 0
 
         # visual_laser = LaserScan()
         # visual_laser = msg
