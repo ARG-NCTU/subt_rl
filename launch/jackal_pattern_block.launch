@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="veh" default="jackal" />
+    <arg name="joy" default="bluetooth_teleop/joy" />
+    <arg name="goal_dis" default="0.5" />
+    <arg name="frame" default="map" />
+
+    <!-- <node pkg="vrx_gazebo" type="trajectory_visualize.py" name="trajectory_visualize" output="screen"/> -->
+
+    <group ns="$(arg veh)">
+        <node pkg="subt_rl" type="goal_pattern_block_jackal.py" name="rl_jackal_pattern_block" output="screen">
+            <param name="frame" value="$(arg frame)" />
+            <param name="goal_dis" value="$(arg goal_dis)" />
+            <param name="veh" value="$(arg veh)" />
+            <remap from="laser_in" to="/$(arg veh)/RL/scan" />
+            <remap from="odom_in" to="slam_pose" />
+            <remap from="joy" to="/$(arg veh)/$(arg joy)" />
+            <remap from="goal_out" to="/move_base_simple/goal" />
+        </node>
+
+    </group>
+
+    
+</launch>
