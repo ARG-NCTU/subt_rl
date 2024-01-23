@@ -1,4 +1,5 @@
 #! /usr/bin/env python3
+
 import os
 import rospy
 import tensorflow as tf
@@ -9,12 +10,10 @@ from geometry_msgs.msg import PoseStamped, Twist
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Bool
 from scipy.spatial.transform import Rotation as R
-from anchor_measure.msg import PoseDirectional
 
 class GoalNav(object):
     def __init__(self):
         super().__init__()
-
         self.max_dis = 10  # meters
         self.laser_n = 4
         self.pos_n = 10
@@ -29,7 +28,7 @@ class GoalNav(object):
         self.last_pos = None
 
         self.last_omega = 0
-        self.omega_gamma = 0.25
+        self.omega_gamma = 0.02
 
         self.vel_ratio = 0
 
@@ -41,6 +40,7 @@ class GoalNav(object):
         my_dir = os.path.abspath(os.path.dirname(__file__))
         model_path = os.path.join(my_dir, "../model/goal/policy")
         self.policy_network = tf.saved_model.load(model_path)
+        
 
         # pub cmd
         self.pub_cmd = rospy.Publisher("cmd_out", Twist, queue_size=1)
@@ -59,15 +59,11 @@ class GoalNav(object):
             return -math.log(1 + abs(value))
 
     def cb_goal(self, msg):
-        
-        print(msg)
-        new_goal = np.array([msg.pose.position.x, msg.pose.position.y])
-        diff = new_goal
 
-        if msg.pose.orientation.w == 0:
-            angle = math.atan2(diff[1], diff[0])
-        else:
-            angle = msg.pose.orientation.w == 0
+        new_goal = np.array([msg.pose.position.x, msg.pose.position.y])
+        print(new_goal)
+        diff = new_goal
+        angle = math.atan2(diff[1], diff[0])
             
         if angle >= np.pi:
             angle -= 2*np.pi
@@ -101,7 +97,7 @@ class GoalNav(object):
             return
 
         dis = np.linalg.norm(self.goal)
-        if dis < 0.8:
+        if dis < 0.1:
             rospy.loginfo("goal reached")
             self.goal = None
             return
@@ -122,7 +118,9 @@ class GoalNav(object):
         cmd = Twist()
         cmd.linear.x = action[0]*self.action_scale['linear']
         cmd.angular.z = self.last_omega * \
-            self.action_scale['angular']
+            self.action_scale['angular'] 
+        
+        print(cmd)
 
         self.pub_cmd.publish(cmd)
 

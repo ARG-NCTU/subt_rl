@@ -3,7 +3,7 @@
 <launch>
 
     <arg name="veh" default="locobot" />
-    <arg name="cmd" default="locobot/cmd_vel" />
+    <arg name="cmd" default="cmd_vel" />
 
     <include file="$(find subt_rl)/launch/pcToLaser_240_xbot.launch">
     </include>
@@ -11,8 +11,8 @@
     <group ns="$(arg veh)">
 
         <node pkg="subt_rl" type="goal_nav_tf_locobot.py" name="goal_nav_rl" output="screen">
-            <remap from="goal_in" to="destination" />
-            <remap from="laser_in" to="locobot/RL/scan" /> 
+            <remap from="goal_in" to="/destination" />
+            <remap from="laser_in" to="RL/scan" /> 
             <remap from="cmd_out" to="$(arg cmd)" />
         </node>
 
