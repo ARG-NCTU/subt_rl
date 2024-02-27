@@ -24,6 +24,7 @@ class GoalNav(object):
         self.goal_dis = rospy.get_param("~goal_dis", 4)
         self.action_scale = {'linear': rospy.get_param(
             '~linear_scale', 0.45), 'angular': rospy.get_param("~angular_scale", 0.45)}
+        self.scale_scan = rospy.get_param("~scale_scan", 1)
         #0.5
         self.auto = 0
         self.goal = None
@@ -148,44 +149,22 @@ class GoalNav(object):
 
     def cb_laser(self, msg):
         ranges = np.array(msg.ranges)
-        if(self.count<=100):
-            # print("90 degree")
-            visual_laser = LaserScan()
-            visual_laser = msg
-            visual_laser.ranges = ranges
-            for i in range(len(visual_laser.ranges)):
-                if(i<=74 or i>=165):
-                    visual_laser.ranges[i] = 100
-            self.pub_visual_laser.publish(visual_laser)
-
-            for i in range(len(ranges)):
-                if(i<=74 or i>=165):
-                    ranges[i] = self.max_dis
         
-        elif(self.count>100 and self.count<=200):
-            # print("240 degree")
-            visual_laser = LaserScan()
-            visual_laser = msg
-            visual_laser.ranges = ranges
-            self.pub_visual_laser.publish(visual_laser)
+        for i in range(len(ranges)):
+            ranges[i] = ranges[i] * self.scale_scan
+                # 90 deg 
+        visual_laser = LaserScan()
+        visual_laser = msg
+        visual_laser.ranges = ranges
+             
+        # Allow for 90 degree view
+        for i in range(len(visual_laser.ranges)):
+            if(i<=74 or i>=165):
+                visual_laser.ranges[i] = self.max_dis
 
-        else:
-            # print("reset count")
-            self.count = 0
-
-        # visual_laser = LaserScan()
-        # visual_laser = msg
-        # visual_laser.ranges = ranges
-        # for i in range(len(visual_laser.ranges)):
-        #     if(i<=74 or i>=165):
-        #         visual_laser.ranges[i] = 100
-        # self.pub_visual_laser.publish(visual_laser)
-
-        # for i in range(len(ranges)):
-        #     if(i<=74 or i>=165):
-        #         ranges[i] = self.max_dis
-        
         ranges = np.clip(ranges, 0, self.max_dis)
+        
+        self.pub_visual_laser.publish(visual_laser)
         
         # print(ranges)
         if self.laser_stack is None:
@@ -193,6 +172,36 @@ class GoalNav(object):
         else:
             self.laser_stack[:-1] = self.laser_stack[1:]
             self.laser_stack[-1] = ranges
+            
+        
+        
+        ##Switch 
+        # if(self.count<=100):
+        #     # print("90 degree")
+        #     visual_laser = LaserScan()
+        #     visual_laser = msg
+        #     visual_laser.ranges = ranges
+        #     for i in range(len(visual_laser.ranges)):
+        #         if(i<=74 or i>=165):
+        #             visual_laser.ranges[i] = self.max_dis
+        #     self.pub_visual_laser.publish(visual_laser)
+
+        #     for i in range(len(ranges)):
+        #         if(i<=74 or i>=165):
+        #             ranges[i] = self.max_dis
+        
+        # elif(self.count>100 and self.count<=200):
+        #     # print("240 degree")
+        #     visual_laser = LaserScan()
+        #     visual_laser = msg
+        #     visual_laser.ranges = ranges
+        #     self.pub_visual_laser.publish(visual_laser)
+
+        # else:
+        #     # print("reset count")
+        #     self.count = 0
+
+
 
     def inference(self, event):
         if self.goal is None:
