@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="veh" default="jackal" />
+    <arg name="frame" default="map" />
+    <!-- map truth_map_posestamped -->
+    <group ns="$(arg veh)">
+
+        <node pkg="subt_rl" type="record_goal.py" name="record_goal" output="screen">
+            <param name="frame" value="$(arg frame)" />
+            <remap from="odom_in" to="/truth_map_posestamped" />
+            <remap from="joy" to="/joy" />
+        </node>
+    </group>
+
+</launch>
